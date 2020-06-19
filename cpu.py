@@ -42,6 +42,11 @@ class CPU:
         self.MUL = 0b10100010
         self.CMP = 0b10100111
 
+        # Comparison Flags
+        self.less_than_fl = 0b00000100
+        self.greater_than_fl = 0b00000010
+        self.equal_to_fl = 0b00000001
+        
     def load(self):
         """Load a program into memory."""
 
@@ -388,7 +393,7 @@ class CPU:
         self.program_counter += 1
 
         print(f"After mul, val1: {value1}, val2: {value2}")
-
+    
     # CMP : Compare two values
     def compare(self):
         # Print that your using this function
@@ -405,22 +410,24 @@ class CPU:
         var_b = self.ram_read(self.program_counter)
 
         # Set FL depending on whether a is LESS, GREATER or EQUAL to b
+        # 00000LGE
         if var_a < var_b:
-            self.FL = 0b00000100
+            print(f"{var_a} is less than {var_b}")
+            self.FL = self.less_than_fl
         elif var_a > var_b:
-            self.FL = 0b00000010
-            G = "1"
+            print(f"{var_a} is greater than {var_b}")
+            self.FL = self.greater_than_fl
         elif var_a == var_b:
-            self.FL = 0b00000001
+            print(f"{var_a} is equal to {var_b}")
+            self.FL = self.equal_to_fl
         else: 
             print("Couldn't Compare Values")
 
-        print(f"FL: {self.FL}")
+        print(f"FL: {bin(self.FL)}")
 
         # Go to the next instruction
         self.program_counter += 1
         
-
 
 
 
