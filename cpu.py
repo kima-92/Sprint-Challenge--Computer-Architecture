@@ -33,6 +33,10 @@ class CPU:
         self.CALL = 0b01010000
         self.RET = 0b00010001
 
+        self.JMP = 0b01010100
+        self.JEQ = 0b01010101
+        self.JNE = 0b01010110
+
         # Stack Commends
         self.PUSH = 0b01000101
         self.POP = 0b01000110
@@ -96,7 +100,11 @@ class CPU:
             self.POP : self.pop,
             # Subroutine Calling functions
             self.CALL : self.call,
-            self.RET : self.return_from_call
+            self.RET : self.return_from_call,
+
+            #self.JMP : self.jump,
+            self.JEQ : self.if_equal,
+            self.JNE : self.if_not_equal
         }
 
     # Setup ALU functions Keys Dictionary
@@ -338,6 +346,78 @@ class CPU:
         # Set the program_counter to that address (RAM slot)
         self.program_counter = return_addr
 
+    # JMP : Jump 
+    def jump(self):
+        # Print that your using this funciton
+        print(f"Called intruction {self.ram[self.program_counter]}, JMP:")
+
+        # Get the register_num with the instruction (address) we need to jump to
+        self.program_counter += 1
+        reg_num = self.ram_read(self.program_counter)
+
+        # Get the address
+        address = self.registers[reg_num]
+        
+        # Set the pc to jump to that address
+        self.program_counter = address
+        
+        """
+        JMP register
+        Jump to the address stored in the given register.
+        Set the PC to the address stored in the given register."""
+
+    # JEQ : Check if equal_flag == True
+    def if_equal(self):
+        # Print that your using this funciton
+        print(f"Called intruction {self.ram[self.program_counter]}, JEQ (is equal):")
+
+        # If FL is set to equal_to_fl (the CMP gave Equal)
+        if self.FL == self.equal_to_fl:
+            # Re-set FL
+            #self.FL = 0b00000000
+
+            # Jump to the address stored in the given register
+            print("It is equal to, so jump")
+            self.jump()
+
+        # Else: If it's not equal
+        else: 
+            # Re-set the FL
+            #self.FL = 0b00000000
+
+            # Don't Jump, just continue
+            print("It's NOT equal to, so continue")
+            self.program_counter += 2
+            
+        """JEQ register
+        If equal flag is set (true), jump to the address stored in the given register."""
+
+    # JNE : Check if equal_flag == False
+    def if_not_equal(self):
+        # Print that your using this funciton
+        print(f"Called intruction {self.ram[self.program_counter]}, JNE (not equal):")
+
+        # If FL is set to equal_to_fl (CMP gave Equal)
+        if self.FL == self.equal_to_fl:
+            # Re-set FL
+            #self.FL = 0b00000000
+
+            # Don't jump, Continue
+            print("it IS Equal to, so continue")
+            self.program_counter += 2
+        
+        # Else: If it's not Equal
+        else: 
+            # Re-set the FL
+            #self.FL = 0b00000000
+
+            # Jump to the address stored in the given register
+            print("in not equal to, so jump")
+            self.jump()
+
+        """JNE register
+        If E flag is clear (false, 0), jump to the address stored in the given register."""
+
     # ALU Intruction Functions
 
     # ADD : Add two values
@@ -400,14 +480,16 @@ class CPU:
         print(f"Called intruction {self.ram[self.program_counter]}, Compare:")
         
         # Get the next intruction,
-        # which is the FIRST num to compare
+        # which is the register with the FIRST num to compare
         self.program_counter += 1
-        var_a = self.ram_read(self.program_counter)
+        reg_a = self.ram_read(self.program_counter)
+        var_a = self.registers[reg_a]
 
         # Get the next intruction,
-        # which is the SECOND num to compare
+        # which is the register with the SECOND num to compare
         self.program_counter += 1
-        var_b = self.ram_read(self.program_counter)
+        reg_b = self.ram_read(self.program_counter)
+        var_b = self.registers[reg_b]
 
         # Set FL depending on whether a is LESS, GREATER or EQUAL to b
         # 00000LGE
@@ -423,7 +505,7 @@ class CPU:
         else: 
             print("Couldn't Compare Values")
 
-        print(f"FL: {bin(self.FL)}")
+        print(f"FL status: {bin(self.FL)}")
 
         # Go to the next instruction
         self.program_counter += 1
