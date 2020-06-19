@@ -102,7 +102,7 @@ class CPU:
             self.CALL : self.call,
             self.RET : self.return_from_call,
 
-            #self.JMP : self.jump,
+            self.JMP : self.jump,
             self.JEQ : self.if_equal,
             self.JNE : self.if_not_equal
         }
@@ -357,10 +357,9 @@ class CPU:
 
         # Get the address
         address = self.registers[reg_num]
-        
+
         # Set the pc to jump to that address
         self.program_counter = address
-        
         """
         JMP register
         Jump to the address stored in the given register.
@@ -381,10 +380,7 @@ class CPU:
             self.jump()
 
         # Else: If it's not equal
-        else: 
-            # Re-set the FL
-            #self.FL = 0b00000000
-
+        else:
             # Don't Jump, just continue
             print("It's NOT equal to, so continue")
             self.program_counter += 2
@@ -399,18 +395,13 @@ class CPU:
 
         # If FL is set to equal_to_fl (CMP gave Equal)
         if self.FL == self.equal_to_fl:
-            # Re-set FL
-            #self.FL = 0b00000000
 
             # Don't jump, Continue
             print("it IS Equal to, so continue")
             self.program_counter += 2
         
         # Else: If it's not Equal
-        else: 
-            # Re-set the FL
-            #self.FL = 0b00000000
-
+        else:
             # Jump to the address stored in the given register
             print("in not equal to, so jump")
             self.jump()
