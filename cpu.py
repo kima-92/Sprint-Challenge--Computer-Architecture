@@ -61,9 +61,10 @@ class CPU:
         # TODO: error checking on sys.argv
 
         with open(intruction_file) as f:
-            # Go through each line,
-            # and grab the index for each
-            for index, line in enumerate(f):
+            index = 0
+            
+            # Go through each line
+            for line in f:
                 # Split the string by #
                 str_line = line.split("#")
 
@@ -72,6 +73,8 @@ class CPU:
                     number = int(str_line[0], 2)  # The 2 tells it that this should be a base 2 number (binary)
                     # Save it in RAM
                     self.ram_write(index, number)
+
+                    index += 1
 
                 # If you can't, just continue to the next line
                 except ValueError:
@@ -354,12 +357,18 @@ class CPU:
         # Get the register_num with the instruction (address) we need to jump to
         self.program_counter += 1
         reg_num = self.ram_read(self.program_counter)
+        print(f"reg_num: {reg_num}, pc: {self.program_counter}, ram[pc]: {self.ram[self.program_counter]}")
 
         # Get the address
         address = self.registers[reg_num]
+        print(f"reg_num: {reg_num}, address: {address}, pc: {self.program_counter}, ram[pc]: {self.ram[self.program_counter]}")
 
         # Set the pc to jump to that address
         self.program_counter = address
+
+
+
+        print(f"reg_num: {reg_num}, address: {address}, pc: {self.program_counter}, ram[pc]: {self.ram[self.program_counter]}")
         """
         JMP register
         Jump to the address stored in the given register.
